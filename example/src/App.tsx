@@ -1,31 +1,47 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'rn-speed-test';
+import RnSpeedTestProvider, {
+  useRnSpeedTest,
+  type RnSpeedTestConfig,
+} from 'rn-speed-test';
 
-export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
-  React.useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
+const Example = ({ error }: { error: string }) => {
+  const { networkSpeed, networkSpeedText } = useRnSpeedTest();
 
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
+    <View style={styles.main}>
+      <Text style={styles.text}>
+        {error ? error : networkSpeed ? networkSpeedText : 'calculating...'}
+      </Text>
     </View>
+  );
+};
+export default function App() {
+  const [error, setError] = React.useState('');
+  const cfg: RnSpeedTestConfig = {
+    token: 'YOUR_TOKEN__HERE',
+    timeout: 10000,
+    https: true,
+    urlCount: 5,
+    bufferSize: 8,
+    unit: 'MBps',
+  };
+  return (
+    <RnSpeedTestProvider initialConfig={cfg} onError={setError}>
+      <Example error={error} />
+    </RnSpeedTestProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  main: {
     flex: 1,
+    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+  text: {
+    color: 'white',
   },
 });
