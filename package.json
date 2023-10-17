@@ -1,6 +1,6 @@
 {
   "name": "rn-speed-test",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "react native network speed",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
