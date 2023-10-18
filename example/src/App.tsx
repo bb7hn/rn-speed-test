@@ -20,7 +20,7 @@ const Example = ({ error }: { error: string }) => {
 export default function App() {
   const [error, setError] = React.useState('');
   const cfg: RnSpeedTestConfig = {
-    token: 'YOUR_TOKEN__HERE',
+    token: 'YOUR_TOKEN_HERE',
     timeout: 10000,
     https: true,
     urlCount: 5,
