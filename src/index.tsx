@@ -70,7 +70,7 @@ export default function RnSpeedTestProvider({
           https: ${config.https},
           urlCount: ${config.urlCount},
           bufferSize: ${config.bufferSize},
-          unit: ${UNITS[config.unit]},
+          unit: ${(UNITS as any)[config.unit]},
         });
 
         window.test = ()=>{
@@ -87,18 +87,30 @@ export default function RnSpeedTestProvider({
 `;
 
   useEffect(() => {
-    setTimeout(() => {
+    const checkAndRun = () => {
       if (webViewRef.current) {
         const run = `
           try{
-            window.test()
+            if (typeof window.test === 'function') {
+              window.test()
+            } else {
+              setTimeout(() => {
+                if (typeof window.test === 'function') {
+                  window.test()
+                } else {
+                  window.ReactNativeWebView.postMessage(JSON.stringify({ error: 'Speed test function not ready' }));
+                }
+              }, 2000);
+            }
           } catch(e){
             window.ReactNativeWebView.postMessage(JSON.stringify({ error: e.message }));
           }
           `;
         webViewRef.current.injectJavaScript(run);
       }
-    }, 1000);
+    };
+
+    setTimeout(checkAndRun, 2000);
   }, []);
 
   const values = {
